@@ -105,7 +105,7 @@ export default function App() {
               <a href="#about" className="block text-gray-700 hover:text-[#f4c430] transition-colors">About</a>
               <a href="#contact" className="block text-gray-700 hover:text-[#f4c430] transition-colors">Contact</a>
               <button className="w-full px-6 py-2 rounded-lg text-white" style={{ backgroundColor: '#0b1f3a' }}>
-                Enquiry Now
+                <a href='#contact'  >Enquiry Now</a>
               </button>
             </div>
           </div>
