@@ -82,8 +82,10 @@ export default function App() {
               <a href="#services" className="text-gray-700 hover:text-[#f4c430] transition-colors">Services</a>
               <a href="#about" className="text-gray-700 hover:text-[#f4c430] transition-colors">About</a>
               <a href="#contact" className="text-gray-700 hover:text-[#f4c430] transition-colors">Contact</a>
-              <button className="px-6 py-2 rounded-lg text-white transition-all hover:shadow-lg" style={{ backgroundColor: '#0b1f3a' }}>
-                Call Now
+              <button onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                className="w-full px-6 py-2 rounded-lg text-white"
+                style={{ backgroundColor: '#0b1f3a' }}
+                > Enquiry Now
               </button>
             </div>
 
@@ -104,8 +106,10 @@ export default function App() {
               <a href="#services" className="block text-gray-700 hover:text-[#f4c430] transition-colors">Services</a>
               <a href="#about" className="block text-gray-700 hover:text-[#f4c430] transition-colors">About</a>
               <a href="#contact" className="block text-gray-700 hover:text-[#f4c430] transition-colors">Contact</a>
-              <button className="w-full px-6 py-2 rounded-lg text-white" style={{ backgroundColor: '#0b1f3a' }}>
-                <a href='#contact'  >Enquiry Now</a>
+              <button onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                className="w-full px-6 py-2 rounded-lg text-white"
+                style={{ backgroundColor: '#0b1f3a' }}
+                > Enquiry Now
               </button>
             </div>
           </div>
