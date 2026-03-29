@@ -1,17 +1,17 @@
 import { useState, type FormEvent } from 'react';
-import emailjs from '@emailjs/browser';
 import { Home, Building2, CreditCard, LandPlot, CheckCircle2, Clock, HeadphonesIcon, MapPin, Phone, Mail, Menu, X, MessageCircle } from 'lucide-react';
 
 export default function App() {
-  const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || import.meta.env.VITE_SERVICE_ID || '';
-  const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || import.meta.env.VITE_TEMPLATE_ID || '';
-  const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || import.meta.env.VITE_PUBLIC_KEY || '';
+  const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xqegpgyz';
+  const WHATSAPP_NUMBER = '919022386218';
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
   const [referenceId, setReferenceId] = useState('');
+  const [fallbackWhatsAppText, setFallbackWhatsAppText] = useState('Hi, I am interested in a loan. Please assist me.');
+  
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,34 +25,41 @@ export default function App() {
     const userEmail = String(formData.get('email') ?? '').trim();
     const message = String(formData.get('message') ?? '').trim();
     const newReferenceId = `NFC-${Date.now()}`;
+    const whatsAppLeadText = `Hi, I am interested in a loan. Name: ${userName || 'N/A'}, Phone: ${userPhone || 'N/A'}.`;
+
+    setFallbackWhatsAppText(whatsAppLeadText);
 
     try {
-      if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
-        throw new Error('Email service is not configured on this deployment.');
-      }
-
-      // Developer Notes:
-      // Form uses EmailJS (client-side email service).
-      // Reference ID is dynamically generated and passed to EmailJS template.
-      // Email includes name, phone, message, and reference ID.
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
           title: 'New Loan Inquiry',
           user_name: userName,
           user_phone: userPhone,
           email: userEmail,
           message,
           reference_id: newReferenceId,
-          // Backward-compatible aliases in case template still references old names.
           full_name: userName,
           phone_number: userPhone,
-        },
-        {
-          publicKey: EMAILJS_PUBLIC_KEY,
-        },
-      );
+        }),
+      });
+
+      if (!response.ok) {
+        let formspreeMessage = 'Something went wrong. Please try again or contact us on WhatsApp.';
+
+        try {
+          const errorData = (await response.json()) as { errors?: Array<{ message?: string }> };
+          formspreeMessage = errorData.errors?.[0]?.message || formspreeMessage;
+        } catch {
+          // Keep default fallback when error response is not JSON.
+        }
+
+        throw new Error(formspreeMessage);
+      }
 
       setReferenceId(newReferenceId);
       setFormSubmitted(true);
@@ -62,24 +69,10 @@ export default function App() {
 
       if (error instanceof Error) {
         message = error.message;
-      } else if (typeof error === 'object' && error !== null) {
-        const emailJsError = error as { status?: number; text?: string };
-        const errorText = (emailJsError.text || '').toLowerCase();
-
-        if (emailJsError.status === 403 || errorText.includes('origin')) {
-          message = 'Email service blocked this domain. Add your deployed URL to EmailJS allowed origins.';
-        } else if (emailJsError.status === 400 || errorText.includes('template')) {
-          message = 'Email template configuration is invalid. Please check EmailJS template variables.';
-        } else if (emailJsError.status === 401 || errorText.includes('public key')) {
-          message = 'Email public key is invalid. Update VITE_EMAILJS_PUBLIC_KEY in deployment settings.';
-        } else if (emailJsError.text) {
-          message = emailJsError.text;
-        }
       }
 
       setFormError(message);
-      // Keep the detailed reason in console for deployment debugging.
-      console.error('EmailJS send failed:', error);
+      console.error('Formspree submit failed:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -505,9 +498,20 @@ export default function App() {
                         )}
                       </button>
                       {formError && (
-                        <p className="text-red-500 text-sm text-center mt-3 font-medium">
-                          {formError}
-                        </p>
+                        <div className="mt-3 space-y-3">
+                          <p className="text-red-500 text-sm text-center font-medium">
+                            {formError}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(fallbackWhatsAppText)}`, '_blank')}
+                            className="w-full py-3 rounded-xl text-white font-semibold transition-all hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                            style={{ backgroundColor: '#25D366' }}
+                          >
+                            <MessageCircle size={18} />
+                            WhatsApp Instant Support
+                          </button>
+                        </div>
                       )}
                     </div>
                     <p className="text-sm text-gray-500 text-center mt-4 flex items-center justify-center gap-2">
@@ -523,7 +527,7 @@ export default function App() {
                   </div>
                   <h3 className="text-2xl font-bold mb-3" style={{ color: '#0b1f3a' }}>Thank You!</h3>
                   <p className="text-gray-600 mb-6">
-                    Your request has been submitted successfully.
+                    Your request has been submitted successfully. We'll contact you shortly.
                   </p>
                   <div className="bg-gradient-to-r from-[#f4c430]/10 to-[#0b1f3a]/10 rounded-xl p-6 mb-6">
                     <p className="text-xl md:text-2xl font-bold mb-2" style={{ color: '#0b1f3a' }}>Reference ID: {referenceId}</p>
@@ -540,7 +544,7 @@ export default function App() {
                     </div>
                   </div>
                   <button
-                    onClick={() => window.open('https://wa.me/919022386218', '_blank')}
+                    onClick={() => window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank')}
                     className="w-full py-4 rounded-xl text-white font-semibold transition-all hover:shadow-lg transform hover:-translate-y-0.5 flex items-center justify-center gap-2 mb-4"
                     style={{ backgroundColor: '#25D366' }}
                   >
@@ -691,7 +695,7 @@ export default function App() {
 
         {/* WhatsApp Button */}
         <a
-          href="https://wa.me/9022386218"
+          href={`https://wa.me/${WHATSAPP_NUMBER}`}
           target="_blank"
           rel="noopener noreferrer"
           title="Chat on WhatsApp"
