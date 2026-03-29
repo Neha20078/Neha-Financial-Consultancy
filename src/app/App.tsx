@@ -105,7 +105,7 @@ export default function App() {
               <a href="#about" className="block text-gray-700 hover:text-[#f4c430] transition-colors">About</a>
               <a href="#contact" className="block text-gray-700 hover:text-[#f4c430] transition-colors">Contact</a>
               <button className="w-full px-6 py-2 rounded-lg text-white" style={{ backgroundColor: '#0b1f3a' }}>
-                Call Now
+                Enquiry Now
               </button>
             </div>
           </div>
@@ -125,12 +125,8 @@ export default function App() {
                 Across Mumbai,Navi Mumbai,Thane & Kalyan.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="px-8 py-3 rounded-lg font-semibold text-[#0b1f3a] transition-all hover:shadow-xl transform hover:-translate-y-1" style={{ backgroundColor: '#f4c430' }}>
-                  Apply Now
-                </button>
-                <button className="px-8 py-3 rounded-lg font-semibold bg-white text-[#0b1f3a] transition-all hover:shadow-xl transform hover:-translate-y-1">
-                  Call Now
-                </button>
+                
+                
               </div>
             </div>
             <div className="hidden md:block">
@@ -190,7 +186,7 @@ export default function App() {
               <p className="text-gray-600 mb-6">
                 Get your dream home with competitive interest rates and flexible repayment options. We guide you through the entire process.
               </p>
-              <button className="text-[#f4c430] font-semibold hover:underline">Learn More →</button>
+             
             </div>
 
             {/* Personal Loan */}
@@ -202,7 +198,7 @@ export default function App() {
               <p className="text-gray-600 mb-6">
                 Quick personal loans for all your immediate financial needs. Minimal documentation and fast approval process.
               </p>
-              <button className="text-[#f4c430] font-semibold hover:underline">Learn More →</button>
+              
             </div>
 
             {/* Mortgage Loan */}
@@ -214,7 +210,7 @@ export default function App() {
               <p className="text-gray-600 mb-6">
                 Leverage your property for financial flexibility. Best rates and transparent terms with expert consultation.
               </p>
-              <button className="text-[#f4c430] font-semibold hover:underline">Learn More →</button>
+              
             </div>
           </div>
         </div>
@@ -222,7 +218,8 @@ export default function App() {
 
       {/* About Section */}
       <section id="about" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto"
+        style={{backgroundImage:"url('https://th.bing.com/th/id/R.8b0f785d8d650b367a054e5717fdc296?rik=tpmN%2b9BKPy0jxw&riu=http%3a%2f%2fsakaconsulting.net%2fupload%2f26122229332577127542services2.jpg&ehk=l2h6pPqpYah3xa8IvRgbb6bl6m%2bdT9Dg3Xe56bvniVo%3d&risl=&pid=ImgRaw&r=0')"}}>
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <div className="bg-gradient-to-br from-[#f4c430] to-[#0b1f3a] rounded-2xl p-1">
@@ -239,7 +236,7 @@ export default function App() {
             <div>
               <h2 className="text-3xl md:text-4xl font-bold mb-6" style={{ color: '#0b1f3a' }}>About Us</h2>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Neha Financial Consultancy has been serving the Kalyan community with dedication and integrity. We specialize in providing comprehensive loan solutions tailored to your unique financial needs.
+                Neha Financial Consultancy has been serving the Kalyan,Thane,Mumbai and Navi-mumbai region community with dedication and integrity. We specialize in providing comprehensive loan solutions tailored to your unique financial needs.
               </p>
               <p className="text-gray-600 mb-8 leading-relaxed">
                 Our team of experienced professionals ensures that you receive the best guidance throughout your loan journey, making the process smooth and hassle-free.
@@ -645,6 +642,7 @@ export default function App() {
 
           <div className="border-t border-gray-700 pt-8 text-center text-gray-300">
             <p>&copy; 2026 Neha Financial Consultancy. All rights reserved.</p>
+            <p> Developed & Designed by Neha Bagal</p>
           </div>
         </div>
       </footer>
