@@ -3,20 +3,20 @@ import emailjs from '@emailjs/browser';
 import { Home, Building2, CreditCard, LandPlot, CheckCircle2, Clock, HeadphonesIcon, MapPin, Phone, Mail, Menu, X, MessageCircle } from 'lucide-react';
 
 export default function App() {
-  const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-  const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-  const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+  const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || import.meta.env.VITE_SERVICE_ID || '';
+  const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || import.meta.env.VITE_TEMPLATE_ID || '';
+  const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || import.meta.env.VITE_PUBLIC_KEY || '';
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formError, setFormError] = useState(false);
+  const [formError, setFormError] = useState('');
   const [referenceId, setReferenceId] = useState('');
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setFormError(false);
+    setFormError('');
 
     const formElement = e.currentTarget;
     const formData = new FormData(formElement);
@@ -28,7 +28,7 @@ export default function App() {
 
     try {
       if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
-        throw new Error('Missing EmailJS environment variables');
+        throw new Error('Email service is not configured on this deployment.');
       }
 
       // Developer Notes:
@@ -57,8 +57,29 @@ export default function App() {
       setReferenceId(newReferenceId);
       setFormSubmitted(true);
       formElement.reset();
-    } catch {
-      setFormError(true);
+    } catch (error) {
+      let message = 'Something went wrong. Please try again or contact us on WhatsApp.';
+
+      if (error instanceof Error) {
+        message = error.message;
+      } else if (typeof error === 'object' && error !== null) {
+        const emailJsError = error as { status?: number; text?: string };
+        const errorText = (emailJsError.text || '').toLowerCase();
+
+        if (emailJsError.status === 403 || errorText.includes('origin')) {
+          message = 'Email service blocked this domain. Add your deployed URL to EmailJS allowed origins.';
+        } else if (emailJsError.status === 400 || errorText.includes('template')) {
+          message = 'Email template configuration is invalid. Please check EmailJS template variables.';
+        } else if (emailJsError.status === 401 || errorText.includes('public key')) {
+          message = 'Email public key is invalid. Update VITE_EMAILJS_PUBLIC_KEY in deployment settings.';
+        } else if (emailJsError.text) {
+          message = emailJsError.text;
+        }
+      }
+
+      setFormError(message);
+      // Keep the detailed reason in console for deployment debugging.
+      console.error('EmailJS send failed:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -485,7 +506,7 @@ export default function App() {
                       </button>
                       {formError && (
                         <p className="text-red-500 text-sm text-center mt-3 font-medium">
-                          Something went wrong. Please try again or contact us on WhatsApp.
+                          {formError}
                         </p>
                       )}
                     </div>
