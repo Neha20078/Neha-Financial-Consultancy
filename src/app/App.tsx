@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { Home, Building2, CreditCard, LandPlot, CheckCircle2, Clock, HeadphonesIcon, MapPin, Phone, Mail, Menu, X, MessageCircle } from 'lucide-react';
 
 export default function App() {
-  const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xqegpgyz';
+  const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xdapepjj';
   const WHATSAPP_NUMBER = '919022386218';
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -37,14 +37,12 @@ export default function App() {
           Accept: 'application/json',
         },
         body: JSON.stringify({
-          title: 'New Loan Inquiry',
-          user_name: userName,
-          user_phone: userPhone,
+          _subject: 'New Loan Inquiry',
+          name: userName,
           email: userEmail,
           message,
+          phone: userPhone,
           reference_id: newReferenceId,
-          full_name: userName,
-          phone_number: userPhone,
         }),
       });
 
